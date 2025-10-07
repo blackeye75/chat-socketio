@@ -2,6 +2,6 @@ import express from 'express';
 
 const messageRouter = express.Router();
 
-messageRouter.post( )
+// messageRouter.post( )
 
-export default authRouter
+export default messageRouter
