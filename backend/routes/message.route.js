@@ -1,7 +1,15 @@
 import express from 'express';
+import { protectRoute } from '../middleware/auth.middleware.js';
+import { getAllContacts, getChatPartners, getMessagesByUserId, sendMessage } from '../controller/message.controller.js';
 
 const messageRouter = express.Router();
 
-// messageRouter.post( )
+messageRouter.use(protectRoute);
 
-export default messageRouter
+messageRouter.get("/contacts", getAllContacts);
+messageRouter.get("/chats", getChatPartners);
+messageRouter.get("/:id", getMessagesByUserId);
+messageRouter.post("/send/:id", sendMessage);
+
+
+export default messageRouter;
