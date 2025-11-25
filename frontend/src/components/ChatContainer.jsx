@@ -5,11 +5,12 @@ import ChatHeader from "./ChatHeader";
 import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceHolder";
 // import MessageInput from "./MessageInput";
 import MessagesLoadingSkeleton from "../components/MessagesLoadingSkeleton";
+import MessageInput from "./MessageInput";
 
 function ChatContainer() {
   const {
     selectedUser,
-    getMessagesByUserId,
+    getMessagesByUserId, 
     messages,
     isMessagesLoading,
     subscribeToMessages,
@@ -72,7 +73,7 @@ function ChatContainer() {
         )}
       </div>
 
-      {/* <MessageInput /> */}
+      <MessageInput />
     </>
   );
 }

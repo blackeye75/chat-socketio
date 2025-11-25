@@ -43,10 +43,10 @@ export const useChatStore = create((set, get) => ({
       set({ isUsersLoading: false });
     }
   },
-   getMessagesByUserId: async (userId) => {
+  getMessagesByUserId: async (userId) => {
     set({ isMessagesLoading: true });
     try {
-      const res = await axiosInstance.get(`/messages/${userId}`);
+      const res = await axiosInstance.get(`/message/${userId}`);
       set({ messages: res.data });
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -54,4 +54,30 @@ export const useChatStore = create((set, get) => ({
       set({ isMessagesLoading: false });
     }
   },
+  sendMessage: async (messageData) => {
+    const { selectedUser, messages } = get();
+    const { authUser } = useAuthStore.getState();
+
+    const tempId = `temp-${Date.now()}`;
+
+    const optimisticMessage = {
+      _id: tempId,
+      senderId: authUser._id,
+      receiverId: selectedUser._id,
+      text: messageData.text,
+      image: messageData.image,
+      createdAt: new Date().toISOString(),
+      isOptimistic: true, // flag to identify optimistic messages (optional)
+    };
+    // immidetaly update the ui by adding the message
+    set({ messages: [...messages, optimisticMessage] });
+    try {
+      const res = await axiosInstance.post(`/message/send/${selectedUser._id}`, messageData);
+      // set({ messages: [...messages, res.data] });
+      set(messages.concat(res.data));
+    } catch (error) {
+      set({messages:messages}); 
+      toast.error(error.response?.data?.message || "Failed to send message");
+    }
+  }
 }));
