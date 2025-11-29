@@ -39,6 +39,7 @@ export const useChatStore = create((set, get) => ({
       set({ chats: res.data });
     } catch (error) {
       toast.error(error.response.data.message);
+      console.log( error, "error in getting chat partners");
     } finally {
       set({ isUsersLoading: false });
     }

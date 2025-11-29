@@ -5,7 +5,7 @@ import User from "../models/user.model.js";
 export const getAllContacts = async (req, res) => {
   try {
     const loggendInUser = req.user._id;
-    console.log(loggendInUser);
+    // console.log(loggendInUser);
 
     const filteredUsers = await User.find({ _id: { $ne: loggendInUser } }).select('-password');
     res.status(200).json(filteredUsers);
