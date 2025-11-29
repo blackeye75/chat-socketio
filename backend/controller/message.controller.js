@@ -30,7 +30,7 @@ export const getMessagesByUserId = async (req, res) => {
     res.status(200).json(messages);
   } catch (error) {
     console.error(`Error in getMessagesByUserId: ${error.message}`);
-    res.status(500).json({ message: "Server error" }); 
+    res.status(500).json({ message: "Server error" });
   }
 }
 export const sendMessage = async (req, res) => {
@@ -51,6 +51,10 @@ export const sendMessage = async (req, res) => {
     });
     const savedMessage = await newMessage.save();
     //send message in real-time using socket.io
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
     res.status(201).json(savedMessage);
   } catch (error) {
     console.error(`Error in sendMessage: ${error.message}`);

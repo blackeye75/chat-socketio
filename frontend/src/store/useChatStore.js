@@ -39,7 +39,7 @@ export const useChatStore = create((set, get) => ({
       set({ chats: res.data });
     } catch (error) {
       toast.error(error.response.data.message);
-      console.log( error, "error in getting chat partners");
+      console.log(error, "error in getting chat partners");
     } finally {
       set({ isUsersLoading: false });
     }
@@ -77,8 +77,34 @@ export const useChatStore = create((set, get) => ({
       // set({ messages: [...messages, res.data] });
       set(messages.concat(res.data));
     } catch (error) {
-      set({messages:messages}); 
+      set({ messages: messages });
       toast.error(error.response?.data?.message || "Failed to send message");
     }
-  }
+  },
+  subscribeToMessages: () => {
+    const { selectedUser, isSoundEnabled } = get();
+    if (!selectedUser) return;
+
+    const socket = useAuthStore.getState().socket;
+
+    socket.on("newMessage", (newMessage) => {
+      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      if (!isMessageSentFromSelectedUser) return;
+
+      const currentMessages = get().messages;
+      set({ messages: [...currentMessages, newMessage] });
+
+      if (isSoundEnabled) {
+        const notificationSound = new Audio("/sounds/notification.mp3");
+
+        notificationSound.currentTime = 0; // reset to start
+        notificationSound.play().catch((e) => console.log("Audio play failed:", e));
+      }
+    });
+  },
+
+  unsubscribeFromMessages: () => {
+    const socket = useAuthStore.getState().socket;
+    socket.off("newMessage");
+  },
 }));
