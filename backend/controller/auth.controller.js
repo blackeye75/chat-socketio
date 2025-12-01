@@ -77,7 +77,7 @@ export const login = async (req, res) => {
 }
 
 export const logout = (req, res) => {
-  res.cookie('token', '', {
+  res.cookie('jwt', '', {
     maxAge: 0,
     httpOnly: true,
   })
